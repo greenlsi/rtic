@@ -33,15 +33,15 @@ name = "rtic"
 [dependencies]
 cortex-m = { version = "0.7.0", optional = true }
 bare-metal = "1.0.0"
-#portable-atomic = { version = "0.3.19" }
-atomic-polyfill = "1"
+# atomic-polyfill = "1"
+atomic-polyfill = {git = "https://github.com/romancardenas/atomic-polyfill.git", branch = "main"}
 rtic-monotonics = { path = "../rtic-monotonics", version = "1.0.0-alpha.1", optional = true }
 rtic-macros = { path = "../rtic-macros", version = "2.0.0-alpha.2" }
 rtic-core = "1"
 critical-section = "1"
 
 riscv = {git = "https://github.com/rust-embedded/riscv.git", branch = "master", optional = true}
-riscv-slic = {git = "https://github.com/romancardenas/riscv-slic", branch = "dev-plic", optional = true}
+riscv-slic = {git = "https://github.com/romancardenas/riscv-slic", branch = "main", optional = true}
 e310x = { git = "https://github.com/greenlsi/e310x.git", branch = "master", optional = true }
 
 [dev-dependencies]
@@ -78,7 +78,7 @@ thumbv8main-backend = ["cortex-m", "rtic-macros/cortex-m-basepri"]
 riscv-slic-backend = ["riscv", "rtic-macros/riscv-slic", "riscv-slic"]
 riscv-slic-plic-clint-backend = ["riscv-slic-backend", "riscv-slic/swi-clint", "riscv-slic/exti-plic"]
 
-riscv-e310x-backend = ["e310x", "riscv-slic-plic-clint-backend"]
+riscv-e310x-backend = ["e310x", "riscv-slic-plic-clint-backend", "riscv-slic/force-atomic-polyfill", "atomic-polyfill/force-polyfill"]
 
 # needed for testing
 rtic-uitestv7 = ["thumbv7-backend"]

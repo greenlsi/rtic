@@ -58,22 +58,9 @@ impl<F: Future> AsyncTaskExecutor<F> {
     /// Checks if a waker has pended the executor and simultaneously clears the flag.
     #[inline(always)]
     fn check_and_clear_pending(&self) -> bool {
-        match () {
-            #[cfg(feature = "riscv-e310x-backend")] // TODO should be for any riscv32imac target
-            () => {
-                let mut was_pended = false;
-                critical_section::with(|_cs| {
-                    was_pended = self.pending.load(Ordering::Acquire);
-                    self.pending.store(false, Ordering::Release);
-                });
-                was_pended
-            }
-            #[cfg(not(feature = "riscv-e310x-backend"))]
-            () => self
-                .pending
-                .compare_exchange(true, false, Ordering::Acquire, Ordering::Relaxed)
-                .is_ok(),
-        }
+        self.pending
+            .compare_exchange(true, false, Ordering::Acquire, Ordering::Relaxed)
+            .is_ok()
     }
 
     // Used by wakers to indicate that the executor needs to run.
@@ -85,24 +72,9 @@ impl<F: Future> AsyncTaskExecutor<F> {
     /// Allocate the executor. To use with `spawn`.
     #[inline(always)]
     pub unsafe fn try_allocate(&self) -> bool {
-        match () {
-            #[cfg(feature = "riscv-e310x-backend")] // TODO should be for any riscv32imac target
-            () => {
-                let mut res: bool = false;
-                critical_section::with(|_cs| {
-                    if !self.running.load(Ordering::Acquire) {
-                        self.running.store(true, Ordering::Release);
-                        res = true;
-                    }
-                });
-                res
-            }
-            #[cfg(not(feature = "riscv-e310x-backend"))]
-            () => self
-                .running
-                .compare_exchange(false, true, Ordering::AcqRel, Ordering::Relaxed)
-                .is_ok(),
-        }
+        self.running
+            .compare_exchange(false, true, Ordering::AcqRel, Ordering::Relaxed)
+            .is_ok()
     }
 
     /// Spawn a future
