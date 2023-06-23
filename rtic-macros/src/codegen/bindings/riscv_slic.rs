@@ -47,10 +47,10 @@ pub fn impl_mutex(
             #[inline(always)]
             fn lock<RTIC_INTERNAL_R>(&mut self, f: impl FnOnce(&mut #ty) -> RTIC_INTERNAL_R) -> RTIC_INTERNAL_R {
 
-                const CEILING: u16 = #ceiling.into();
+                const CEILING: u8 = #ceiling;
 
                 unsafe {
-                    rtic::export::lock(#ptr, CEILING, f);
+                    rtic::export::lock(#ptr, CEILING, f)
                 }
             }
         }
