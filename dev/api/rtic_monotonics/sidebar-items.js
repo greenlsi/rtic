@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["create_systick_token"],"mod":["systick"],"struct":["TimeoutError","TimerQueue"],"trait":["InterruptToken","Monotonic"]};
